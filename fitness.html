@@ -1,0 +1,577 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FitTrack - Fitness Tracker</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --primary: #4361ee;
+            --secondary: #3f37c9;
+            --accent: #4895ef;
+            --light: #f8f9fa;
+            --dark: #212529;
+            --success: #4cc9f0;
+            --danger: #f72585;
+            --warning: #f8961e;
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        body {
+            background-color: #f5f7fa;
+            color: var(--dark);
+            line-height: 1.6;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        
+        header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 20px 0;
+            margin-bottom: 30px;
+            border-bottom: 1px solid #e9ecef;
+        }
+        
+        .logo {
+            font-size: 24px;
+            font-weight: bold;
+            color: var(--primary);
+        }
+        
+        .logo span {
+            color: var(--accent);
+        }
+        
+        .date-display {
+            font-size: 16px;
+            color: #6c757d;
+        }
+        
+        .main-content {
+            display: grid;
+            grid-template-columns: 1fr 2fr;
+            gap: 20px;
+        }
+        
+        .sidebar {
+            background: white;
+            border-radius: 10px;
+            padding: 20px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+        }
+        
+        .dashboard {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 20px;
+        }
+        
+        .card {
+            background: white;
+            border-radius: 10px;
+            padding: 20px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+        }
+        
+        .card-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+        }
+        
+        .card-title {
+            font-size: 18px;
+            font-weight: 600;
+            color: var(--dark);
+        }
+        
+        .card-value {
+            font-size: 28px;
+            font-weight: 700;
+            margin-bottom: 10px;
+        }
+        
+        .card-unit {
+            font-size: 14px;
+            color: #6c757d;
+        }
+        
+        .progress-bar {
+            height: 8px;
+            background: #e9ecef;
+            border-radius: 4px;
+            margin-top: 10px;
+            overflow: hidden;
+        }
+        
+        .progress {
+            height: 100%;
+            background: var(--primary);
+            border-radius: 4px;
+            transition: width 0.5s ease;
+        }
+        
+        .activity-list {
+            margin-top: 20px;
+        }
+        
+        .activity-item {
+            display: flex;
+            justify-content: space-between;
+            padding: 12px 0;
+            border-bottom: 1px solid #e9ecef;
+        }
+        
+        .activity-item:last-child {
+            border-bottom: none;
+        }
+        
+        .activity-name {
+            font-weight: 500;
+        }
+        
+        .activity-value {
+            font-weight: 600;
+            color: var(--primary);
+        }
+        
+        .btn {
+            display: inline-block;
+            padding: 10px 20px;
+            border-radius: 5px;
+            border: none;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        
+        .btn-primary {
+            background: var(--primary);
+            color: white;
+        }
+        
+        .btn-primary:hover {
+            background: var(--secondary);
+        }
+        
+        .btn-block {
+            display: block;
+            width: 100%;
+            text-align: center;
+            margin-top: 15px;
+        }
+        
+        .form-group {
+            margin-bottom: 15px;
+        }
+        
+        .form-label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: 500;
+        }
+        
+        .form-control {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ced4da;
+            border-radius: 5px;
+            font-size: 14px;
+        }
+        
+        .chart-container {
+            height: 200px;
+            margin-top: 20px;
+        }
+        
+        .tabs {
+            display: flex;
+            margin-bottom: 20px;
+            border-bottom: 1px solid #e9ecef;
+        }
+        
+        .tab {
+            padding: 10px 20px;
+            cursor: pointer;
+            font-weight: 500;
+            color: #6c757d;
+        }
+        
+        .tab.active {
+            color: var(--primary);
+            border-bottom: 2px solid var(--primary);
+        }
+        
+        .tab-content {
+            display: none;
+        }
+        
+        .tab-content.active {
+            display: block;
+        }
+        
+        .summary-stats {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 15px;
+            margin-top: 20px;
+        }
+        
+        .stat-item {
+            text-align: center;
+        }
+        
+        .stat-value {
+            font-size: 24px;
+            font-weight: 700;
+            color: var(--primary);
+        }
+        
+        .stat-label {
+            font-size: 14px;
+            color: #6c757d;
+        }
+        
+        @media (max-width: 768px) {
+            .main-content {
+                grid-template-columns: 1fr;
+            }
+            
+            .dashboard {
+                grid-template-columns: 1fr;
+            }
+            
+            .summary-stats {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <div class="logo">Fit<span>Track</span></div>
+            <div class="date-display" id="current-date"></div>
+        </header>
+        
+        <div class="main-content">
+            <div class="sidebar">
+                <h3>Log Activity</h3>
+                <form id="activity-form">
+                    <div class="form-group">
+                        <label for="activity-type" class="form-label">Activity Type</label>
+                        <select id="activity-type" class="form-control" required>
+                            <option value="">Select activity</option>
+                            <option value="walking">Walking</option>
+                            <option value="running">Running</option>
+                            <option value="cycling">Cycling</option>
+                            <option value="swimming">Swimming</option>
+                            <option value="weight-training">Weight Training</option>
+                            <option value="yoga">Yoga</option>
+                            <option value="other">Other</option>
+                        </select>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="duration" class="form-label">Duration (minutes)</label>
+                        <input type="number" id="duration" class="form-control" min="1" required>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="calories" class="form-label">Calories Burned</label>
+                        <input type="number" id="calories" class="form-control" min="1" required>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="distance" class="form-label">Distance (km)</label>
+                        <input type="number" id="distance" class="form-control" min="0" step="0.1">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="notes" class="form-label">Notes</label>
+                        <textarea id="notes" class="form-control" rows="3"></textarea>
+                    </div>
+                    
+                    <button type="submit" class="btn btn-primary btn-block">Log Activity</button>
+                </form>
+                
+                <div class="activity-list" id="recent-activities">
+                    <h3 style="margin-top: 30px;">Recent Activities</h3>
+                    <!-- Activities will be added here dynamically -->
+                </div>
+            </div>
+            
+            <div class="dashboard">
+                <div class="card">
+                    <div class="card-header">
+                        <div class="card-title">Steps Today</div>
+                        <i class="fas fa-walking"></i>
+                    </div>
+                    <div class="card-value" id="steps-today">0</div>
+                    <div class="card-unit">steps</div>
+                    <div class="progress-bar">
+                        <div class="progress" id="steps-progress" style="width: 0%"></div>
+                    </div>
+                    <div class="card-footer" style="margin-top: 10px; font-size: 14px; color: #6c757d;">
+                        Goal: <span id="steps-goal">10,000</span> steps
+                    </div>
+                </div>
+                
+                <div class="card">
+                    <div class="card-header">
+                        <div class="card-title">Calories Burned</div>
+                        <i class="fas fa-fire"></i>
+                    </div>
+                    <div class="card-value" id="calories-today">0</div>
+                    <div class="card-unit">kcal</div>
+                    <div class="progress-bar">
+                        <div class="progress" id="calories-progress" style="width: 0%"></div>
+                    </div>
+                </div>
+                
+                <div class="card" style="grid-column: span 2;">
+                    <div class="tabs">
+                        <div class="tab active" data-tab="weekly">Weekly Summary</div>
+                        <div class="tab" data-tab="monthly">Monthly Summary</div>
+                    </div>
+                    
+                    <div class="tab-content active" id="weekly-tab">
+                        <div class="summary-stats">
+                            <div class="stat-item">
+                                <div class="stat-value" id="weekly-steps">0</div>
+                                <div class="stat-label">Steps</div>
+                            </div>
+                            <div class="stat-item">
+                                <div class="stat-value" id="weekly-calories">0</div>
+                                <div class="stat-label">Calories</div>
+                            </div>
+                            <div class="stat-item">
+                                <div class="stat-value" id="weekly-distance">0</div>
+                                <div class="stat-label">Distance (km)</div>
+                            </div>
+                        </div>
+                        <div class="chart-container">
+                            <!-- Chart would be implemented with a library like Chart.js -->
+                            <p style="text-align: center; color: #6c757d; margin-top: 50px;">
+                                [Weekly activity chart would display here]
+                            </p>
+                        </div>
+                    </div>
+                    
+                    <div class="tab-content" id="monthly-tab">
+                        <div class="summary-stats">
+                            <div class="stat-item">
+                                <div class="stat-value" id="monthly-steps">0</div>
+                                <div class="stat-label">Steps</div>
+                            </div>
+                            <div class="stat-item">
+                                <div class="stat-value" id="monthly-calories">0</div>
+                                <div class="stat-label">Calories</div>
+                            </div>
+                            <div class="stat-item">
+                                <div class="stat-value" id="monthly-distance">0</div>
+                                <div class="stat-label">Distance (km)</div>
+                            </div>
+                        </div>
+                        <div class="chart-container">
+                            <p style="text-align: center; color: #6c757d; margin-top: 50px;">
+                                [Monthly activity chart would display here]
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const now = new Date();
+            document.getElementById('current-date').textContent = now.toLocaleDateString('en-US', { 
+                weekday: 'long', 
+                year: 'numeric', 
+                month: 'long', 
+                day: 'numeric' 
+            });
+            
+            loadData();
+            
+            document.getElementById('activity-form').addEventListener('submit', logActivity);
+            
+            document.querySelectorAll('.tab').forEach(tab => {
+                tab.addEventListener('click', switchTab);
+            });
+        });
+        
+        function loadData() {
+            let fitnessData = localStorage.getItem('fitnessData');
+            
+            if (fitnessData) {
+                fitnessData = JSON.parse(fitnessData);
+                
+
+                if (fitnessData.today) {
+                    document.getElementById('steps-today').textContent = fitnessData.today.steps || 0;
+                    document.getElementById('calories-today').textContent = fitnessData.today.calories || 0;
+                    
+                    const stepsGoal = 10000;
+                    const stepsProgress = Math.min(Math.round((fitnessData.today.steps || 0) / stepsGoal * 100), 100);
+                    document.getElementById('steps-progress').style.width = `${stepsProgress}%`;
+                    
+                    const caloriesGoal = 500;
+                    const caloriesProgress = Math.min(Math.round((fitnessData.today.calories || 0) / caloriesGoal * 100), 100);
+                    document.getElementById('calories-progress').style.width = `${caloriesProgress}%`;
+                }
+                
+                if (fitnessData.weekly) {
+                    document.getElementById('weekly-steps').textContent = fitnessData.weekly.steps || 0;
+                    document.getElementById('weekly-calories').textContent = fitnessData.weekly.calories || 0;
+                    document.getElementById('weekly-distance').textContent = fitnessData.weekly.distance || 0;
+                }
+                
+                if (fitnessData.monthly) {
+                    document.getElementById('monthly-steps').textContent = fitnessData.monthly.steps || 0;
+                    document.getElementById('monthly-calories').textContent = fitnessData.monthly.calories || 0;
+                    document.getElementById('monthly-distance').textContent = fitnessData.monthly.distance || 0;
+                }
+                
+                if (fitnessData.activities) {
+                    updateRecentActivities(fitnessData.activities);
+                }
+            } else {
+                const defaultData = {
+                    today: {
+                        steps: 0,
+                        calories: 0,
+                        distance: 0
+                    },
+                    weekly: {
+                        steps: 0,
+                        calories: 0,
+                        distance: 0
+                    },
+                    monthly: {
+                        steps: 0,
+                        calories: 0,
+                        distance: 0
+                    },
+                    activities: []
+                };
+                
+                localStorage.setItem('fitnessData', JSON.stringify(defaultData));
+            }
+        }
+        
+        function logActivity(e) {
+            e.preventDefault();
+            
+            const activityType = document.getElementById('activity-type').value;
+            const duration = parseInt(document.getElementById('duration').value);
+            const calories = parseInt(document.getElementById('calories').value);
+            const distance = parseFloat(document.getElementById('distance').value) || 0;
+            const notes = document.getElementById('notes').value;
+            
+            const activity = {
+                id: Date.now(),
+                type: activityType,
+                duration: duration,
+                calories: calories,
+                distance: distance,
+                notes: notes,
+                date: new Date().toISOString()
+            };
+            
+            let fitnessData = JSON.parse(localStorage.getItem('fitnessData'));
+            
+            fitnessData.activities.unshift(activity);
+            
+            fitnessData.today.steps = (fitnessData.today.steps || 0) + (activityType === 'walking' || activityType === 'running' ? Math.round(distance * 1500) : 0);
+            fitnessData.today.calories = (fitnessData.today.calories || 0) + calories;
+            fitnessData.today.distance = (fitnessData.today.distance || 0) + distance;
+            
+            fitnessData.weekly.steps = (fitnessData.weekly.steps || 0) + (activityType === 'walking' || activityType === 'running' ? Math.round(distance * 1500) : 0);
+            fitnessData.weekly.calories = (fitnessData.weekly.calories || 0) + calories;
+            fitnessData.weekly.distance = (fitnessData.weekly.distance || 0) + distance;
+            
+            fitnessData.monthly.steps = (fitnessData.monthly.steps || 0) + (activityType === 'walking' || activityType === 'running' ? Math.round(distance * 1500) : 0);
+            fitnessData.monthly.calories = (fitnessData.monthly.calories || 0) + calories;
+            fitnessData.monthly.distance = (fitnessData.monthly.distance || 0) + distance;
+            
+            localStorage.setItem('fitnessData', JSON.stringify(fitnessData));
+            
+            loadData();
+            
+            document.getElementById('activity-form').reset();
+        }
+        
+        function updateRecentActivities(activities) {
+            const container = document.getElementById('recent-activities');
+            
+            while (container.children.length > 1) {
+                container.removeChild(container.lastChild);
+            }
+            
+            const recentActivities = activities.slice(0, 5);
+            
+            recentActivities.forEach(activity => {
+                const activityItem = document.createElement('div');
+                activityItem.className = 'activity-item';
+                
+                const activityInfo = document.createElement('div');
+                activityInfo.className = 'activity-info';
+                
+                const activityName = document.createElement('span');
+                activityName.className = 'activity-name';
+                activityName.textContent = activity.type.charAt(0).toUpperCase() + activity.type.slice(1);
+                
+                const activityDuration = document.createElement('span');
+                activityDuration.className = 'activity-duration';
+                activityDuration.textContent = ` • ${activity.duration} min`;
+                activityDuration.style.color = '#6c757d';
+                activityDuration.style.fontSize = '14px';
+                
+                activityInfo.appendChild(activityName);
+                activityInfo.appendChild(activityDuration);
+                
+                const activityValue = document.createElement('div');
+                activityValue.className = 'activity-value';
+                activityValue.textContent = `${activity.calories} kcal`;
+                
+                activityItem.appendChild(activityInfo);
+                activityItem.appendChild(activityValue);
+                
+                container.appendChild(activityItem);
+            });
+        }
+        
+        function switchTab(e) {
+            document.querySelectorAll('.tab').forEach(tab => {
+                tab.classList.remove('active');
+            });
+            
+            e.target.classList.add('active');
+            
+            document.querySelectorAll('.tab-content').forEach(content => {
+                content.classList.remove('active');
+            });
+            
+            const tabId = e.target.getAttribute('data-tab');
+            document.getElementById(`${tabId}-tab`).classList.add('active');
+        }
+    </script>
+</body>
+</html>
